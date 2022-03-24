@@ -1,90 +1,107 @@
 package game.rockpaperscissors;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import game.rockpaperscissors.entity.GameInfo;
+import game.rockpaperscissors.entity.Player;
+import org.springframework.stereotype.Component;
 
+import java.util.*;
+
+@Component
 public class GameService {
 
-    private GameService(){}
+    private final Map<UUID, GameInfo> games = new HashMap<>();
 
-    private static GameService instance = null;
+    private static final String errorMsg = "Could not find game id or player name.";
 
-    private Map<UUID, MatchInfo> games = new HashMap();
-
-    public static GameService getInstance (){
-        if(instance == null){
-            instance = new GameService();
-        }
-        return instance;
-    }
-
-    //TODO: what to do if not all info is present?
-    public MatchInfo getMatchInfo(UUID id){
+    /**
+     * Get info for specified game
+     * @param id
+     * @return
+     */
+    public GameInfo getGameInfo(UUID id){
         if(!games.containsKey(id)){
-            throw new RuntimeException("Could not find game id: " + id); //TODO: faulthandling?
+            throw new NoSuchElementException(errorMsg);
         }
         return games.get(id);
     }
 
+    /**
+     * Creates a game for player
+     * @param playerName
+     * @return
+     */
     public UUID createGame(String playerName){
         //TODO: Fix
         UUID id = UUID.fromString("8fe97dfa-0fb0-4f4f-9ec2-bcc7a8cbe5ad");//UUID.randomUUID();
-        MatchInfo mi = new MatchInfo();
-        mi.setPlayer1(playerName);
-        games.put(id, mi);
+        GameInfo gameInfo = new GameInfo();
+        gameInfo.setPlayer1(new Player(playerName));
+        games.put(id, gameInfo);
         return id;
     }
 
+    /**
+     * Adds player to existing game
+     * @param id
+     * @param playerName
+     */
     public void joinGame(UUID id, String playerName) {
-        MatchInfo mi = getMatchInfo(id);
-        mi.setPlayer2(playerName);
+        GameInfo gameInfo = getGameInfo(id);
+        gameInfo.setPlayer2(new Player(playerName));
     }
 
+    /**
+     * Records an action for player.
+     * If both players has recorded an action a winner is determined.
+     * @param id
+     * @param name
+     * @param move
+     */
     public void recordAction(UUID id, String name, String move){
-        MatchInfo mi = getMatchInfo(id);
-        setMove(mi, name, move);
+        GameInfo gameInfo = getGameInfo(id);
+        Player player = getPlayerWithName(gameInfo, name);
+        player.setMove(Move.valueOf(move.toUpperCase()));
 
-        if(mi.getWinnerName() == null &&
-                mi.getPlayer1Move() != null && mi.getPlayer2Move() != null){
-            determineWinner(mi);
+        if(gameInfo.getWinner() == null &&
+                gameInfo.getPlayer1().getMove() != null &&
+                gameInfo.getPlayer2() != null && gameInfo.getPlayer2().getMove() != null) {
+            determineWinner(gameInfo);
         }
     }
 
-    private void setMove(MatchInfo mi, String name, String move){
-        if(mi.getPlayer1().equals(name)){
-            mi.setPlayer1Move(Move.valueOf(move));
-        } else if(mi.getPlayer2() != null && mi.getPlayer2().equals(name)){
-            mi.setPlayer2Move(Move.valueOf(move));
-        } else{
-            //TODO: Runtime?
-            throw new IllegalStateException("Player '" + name + "' is not playing in this game.");
+    private Player getPlayerWithName(GameInfo gameInfo, String name){
+        if(gameInfo.getPlayer1().getName().equals(name)){
+            return gameInfo.getPlayer1();
+        } else if(gameInfo.getPlayer2() != null && gameInfo.getPlayer2().getName().equals(name)){
+            return gameInfo.getPlayer2();
         }
+        throw new IllegalArgumentException(errorMsg);
     }
 
-    private void determineWinner(MatchInfo mi){
-        //TODO:Snyggare?
-        if(mi.getPlayer1Move().equals(mi.getPlayer2Move())){
-            mi.setWinnerName("tie");
+    private void determineWinner(GameInfo gameInfo){
+        if(gameInfo.getPlayer1().getMove().equals(gameInfo.getPlayer2().getMove())){
+            gameInfo.setWinner("tie");
             return;
         }
 
-        if(mi.getPlayer1Move().equals(Move.PAPER)){
-            if(mi.getPlayer2Move().equals(Move.ROCK)){
-                mi.setWinnerName(mi.getPlayer1());
+        if(gameInfo.getPlayer1().getMove().equals(Move.PAPER)){
+            if(gameInfo.getPlayer2().getMove().equals(Move.ROCK)){
+                gameInfo.setWinner(gameInfo.getPlayer1().getName());
+            } else {
+                gameInfo.setWinner(gameInfo.getPlayer2().getName());
             }
-            mi.setWinnerName(mi.getPlayer2());
-        } else if(mi.getPlayer1Move().equals(Move.ROCK)){
-            if(mi.getPlayer2Move().equals(Move.SCISSORS)){
-                mi.setWinnerName(mi.getPlayer1());
+        } else if(gameInfo.getPlayer1().getMove().equals(Move.ROCK)){
+            if(gameInfo.getPlayer2().getMove().equals(Move.SCISSORS)){
+                gameInfo.setWinner(gameInfo.getPlayer1().getName());
+            } else {
+                gameInfo.setWinner(gameInfo.getPlayer2().getName());
             }
-            mi.setWinnerName(mi.getPlayer2());
         } else {
-            //P1 has scissors
-            if(mi.getPlayer2Move().equals(Move.PAPER)){
-                mi.setWinnerName(mi.getPlayer1());
+            //Player1 has scissors
+            if(gameInfo.getPlayer2().getMove().equals(Move.PAPER)){
+                gameInfo.setWinner(gameInfo.getPlayer1().getName());
+            } else {
+                gameInfo.setWinner(gameInfo.getPlayer2().getName());
             }
-            mi.setWinnerName(mi.getPlayer2());
         }
     }
 }

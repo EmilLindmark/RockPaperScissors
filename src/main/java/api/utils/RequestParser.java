@@ -1,4 +1,4 @@
-package game.rockpaperscissors.utils;
+package api.utils;
 
 import org.json.JSONObject;
 
