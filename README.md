@@ -30,5 +30,5 @@ I request-body'n ange namn på spelaren som vill göra draget och vilket drag sp
 }
 
 ### Hämsta spelets nuvarande tillstånd
-Efter att spelet är startat kan man hela tiden hämta spelets nuvarande tillstånd. Detta görs genom att skapa ett GET-anrop och ange adressen: http://localhost:8080/api/games/{id} där {id} är UUID't från första steget.
+Efter att spelet är startat kan man under spelets gång hämta spelets tillstånd. Spelarnamn och drag är dolda tills en vinnare har utsetts. Detta görs genom att skapa ett GET-anrop och ange adressen: http://localhost:8080/api/games/{id} där {id} är UUID't från första steget.
 
