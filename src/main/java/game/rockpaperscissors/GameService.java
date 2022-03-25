@@ -13,6 +13,8 @@ public class GameService {
 
     private static final String errorMsg = "Could not find game id or player name.";
 
+    protected static final String tie = "Tie";
+
     /**
      * Get info for specified game
      * @param id
@@ -31,8 +33,7 @@ public class GameService {
      * @return
      */
     public UUID createGame(String playerName){
-        //TODO: Fix
-        UUID id = UUID.fromString("8fe97dfa-0fb0-4f4f-9ec2-bcc7a8cbe5ad");//UUID.randomUUID();
+        UUID id = UUID.randomUUID();
         GameInfo gameInfo = new GameInfo();
         gameInfo.setPlayer1(new Player(playerName));
         games.put(id, gameInfo);
@@ -77,9 +78,9 @@ public class GameService {
         throw new IllegalArgumentException(errorMsg);
     }
 
-    private void determineWinner(GameInfo gameInfo){
+    protected void determineWinner(GameInfo gameInfo){
         if(gameInfo.getPlayer1().getMove().equals(gameInfo.getPlayer2().getMove())){
-            gameInfo.setWinner("tie");
+            gameInfo.setWinner(tie);
             return;
         }
 

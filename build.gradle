@@ -22,4 +22,7 @@ test {
     useJUnitPlatform()
 }
 
-
+copy {
+    from "README.md"
+    into "src/main/resources"
+}

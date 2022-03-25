@@ -1,5 +1,6 @@
 package api;
 
+import api.utils.ResponseBuilder;
 import game.rockpaperscissors.GameService;
 import game.rockpaperscissors.entity.GameInfo;
 import game.rockpaperscissors.Move;
@@ -32,18 +33,13 @@ public class RestControllerTest {
     public void testGetMatchInfo(){
         UUID id = UUID.randomUUID();
         GameInfo gameInfoMock = Mockito.mock(GameInfo.class);
-        Player playerMock = Mockito.mock(Player.class);
-
-        Mockito.when(gameInfoMock.getPlayer1()).thenReturn(playerMock);
-        String playerName = "John";
-        Mockito.when(playerMock.getName()).thenReturn(playerName);
         Mockito.when(gameService.getGameInfo(id)).thenReturn(gameInfoMock);
 
         ResponseEntity<String> response = cut.getGameInfo(id.toString());
 
         Mockito.verify(gameService, Mockito.times(1))
                 .getGameInfo(id);
-        Assertions.assertTrue(response.getBody().contains(playerName));
+        Assertions.assertFalse(response.getBody().isEmpty());
     }
 
     @Test

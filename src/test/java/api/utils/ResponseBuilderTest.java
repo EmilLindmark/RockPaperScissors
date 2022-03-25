@@ -15,17 +15,7 @@ public class ResponseBuilderTest {
     private final String player2Name = "Mikaela";
 
     @Test
-    public void testCreateMatchInfoResponseNoPlayers(){
-        GameInfo gameInfoMock = Mockito.mock(GameInfo.class);
-
-        ResponseEntity<String> response = ResponseBuilder
-                .createMatchInfoResponse(gameInfoMock);
-
-        Assert.assertTrue(response.getBody().isEmpty());
-    }
-
-    @Test
-    public void testCreateMatchInfoResponseTwoPlayers(){
+    public void testCreateMatchInfoResponseWinnerNotDetermined(){
         GameInfo gameInfoMock = Mockito.mock(GameInfo.class);
         Player player1Mock = Mockito.mock(Player.class);
         Player player2Mock = Mockito.mock(Player.class);
@@ -38,50 +28,21 @@ public class ResponseBuilderTest {
         System.out.println("resp: " + response.getBody());
 
         Assertions.assertAll(
-                () -> Assert.assertTrue(response.getBody().contains(player1Name)),
-                () -> Assert.assertTrue(response.getBody().contains(player2Name))
+                () -> Assert.assertTrue(!response.getBody().contains(player1Name)),
+                () -> Assert.assertTrue(!response.getBody().contains(player2Name))
         );
     }
 
     @Test
-    public void testCreateMatchInfoResponseNoRecordedMove(){
+    public void testCreateMatchInfoResponseWinnerDetermined(){
         GameInfo gameInfoMock = Mockito.mock(GameInfo.class);
-        Player playerMock = Mockito.mock(Player.class);
-        configureMocks(gameInfoMock, playerMock, null);
-
-        ResponseEntity<String> response = ResponseBuilder
-                .createMatchInfoResponse(gameInfoMock);
-
-        Assertions.assertAll(
-                () -> Assert.assertTrue(response.getBody().contains(player1Name)),
-                () -> Assert.assertTrue(response.getBody().contains(ResponseBuilder.moveNotRecorded))
-        );
-    }
-
-    @Test
-    public void testCreateMatchInfoResponseMoveHidden(){
-        GameInfo gameInfoMock = Mockito.mock(GameInfo.class);
-        Player playerMock = Mockito.mock(Player.class);
-        configureMocks(gameInfoMock, playerMock, null);
-        Move playerMove = Move.PAPER;
-        Mockito.when(playerMock.getMove()).thenReturn(playerMove);
-
-        ResponseEntity<String> response = ResponseBuilder
-                .createMatchInfoResponse(gameInfoMock);
-
-        Assertions.assertAll(
-                () -> Assert.assertTrue(response.getBody().contains(player1Name)),
-                () -> Assert.assertTrue(response.getBody().contains(ResponseBuilder.moveHidden))
-        );
-    }
-
-    @Test
-    public void testCreateMatchInfoResponseMoveVisable(){
-        GameInfo gameInfoMock = Mockito.mock(GameInfo.class);
-        Player playerMock = Mockito.mock(Player.class);
-        configureMocks(gameInfoMock, playerMock, null);
-        Move playerMove = Move.PAPER;
-        Mockito.when(playerMock.getMove()).thenReturn(playerMove);
+        Player player1Mock = Mockito.mock(Player.class);
+        Player player2Mock = Mockito.mock(Player.class);
+        configureMocks(gameInfoMock, player1Mock, player2Mock);
+        Move player1Move = Move.PAPER;
+        Move player2Move = Move.ROCK;
+        Mockito.when(player1Mock.getMove()).thenReturn(player1Move);
+        Mockito.when(player2Mock.getMove()).thenReturn(player2Move);
         Mockito.when(gameInfoMock.getWinner()).thenReturn(player1Name);
 
         ResponseEntity<String> response = ResponseBuilder
@@ -89,7 +50,9 @@ public class ResponseBuilderTest {
 
         Assertions.assertAll(
                 () -> Assert.assertTrue(response.getBody().contains(player1Name)),
-                () -> Assert.assertTrue(response.getBody().contains(playerMove.toString())),
+                () -> Assert.assertTrue(response.getBody().contains(player1Move.toString())),
+                () -> Assert.assertTrue(response.getBody().contains(player2Name)),
+                () -> Assert.assertTrue(response.getBody().contains(player2Move.toString())),
                 () -> Assert.assertTrue(response.getBody().contains("Winner: " + player1Name))
         );
     }

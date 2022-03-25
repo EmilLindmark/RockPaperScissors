@@ -5,46 +5,28 @@ import game.rockpaperscissors.entity.Player;
 import org.springframework.http.ResponseEntity;
 
 public class ResponseBuilder {
-
-    protected final static String moveNotRecorded = "Not recorded";
-    protected final static String moveHidden = "Hidden";
-
-    public static ResponseEntity<String> createMatchInfoResponse(GameInfo mi){
+    public static ResponseEntity<String> createMatchInfoResponse(GameInfo gameInfo){
         StringBuilder body = new StringBuilder();
 
-        boolean hideWinner = mi.getWinner() == null;
-        if(mi.getPlayer1() != null){
-            body.append("===Match Info===\n");
+        body.append("===Match Info===\n");
+        if(gameInfo.getWinner() == null){
+            int noOfPlayers = gameInfo.getPlayer2() == null ? 1 : 2;
+            body.append("Match in progress... \n");
+            body.append("Number of players: " + noOfPlayers + "/2\n");
+        } else{
             body.append(
-                    createPlayerinfo(mi.getPlayer1(), hideWinner) + "\n");
-        }
-
-        if(mi.getPlayer2() != null){
+                    createPlayerinfo(gameInfo.getPlayer1()) + "\n");
             body.append(
-                    createPlayerinfo(mi.getPlayer2(), hideWinner) + "\n");
-        }
-
-        if(!hideWinner){
-            body.append("Winner: " + mi.getWinner());
+                    createPlayerinfo(gameInfo.getPlayer2()) + "\n");
+            body.append("Winner: " + gameInfo.getWinner());
         }
 
         return ResponseEntity.ok().body(body.toString());
     }
 
-    private static String createPlayerinfo(Player player, boolean hideMove){
+    private static String createPlayerinfo(Player player){
         String result = "Name: " + player.getName() +
-                ", Move: " + createMoveInfo(player, hideMove);
+                ", Move: " + player.getMove().toString();
         return result;
-    }
-
-    private static String createMoveInfo(Player player, boolean hideMove){
-        if(player.getMove() == null){
-            return moveNotRecorded;
-        }
-        else if(hideMove){
-            return moveHidden;
-        }
-
-        return player.getMove().toString();
     }
 }

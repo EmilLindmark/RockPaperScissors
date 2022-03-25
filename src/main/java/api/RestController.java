@@ -22,8 +22,8 @@ public class RestController {
 
     @GetMapping("/api/games/{id}")
     public ResponseEntity<String> getGameInfo(@PathVariable(value = "id") String id){
-        System.out.println("Returning matchinfo for game " + id);
         GameInfo mi = gameService.getGameInfo(UUID.fromString(id));
+        System.out.println("Returning matchinfo for game " + id);
         return ResponseBuilder.createMatchInfoResponse(mi);
     }
 
@@ -51,7 +51,7 @@ public class RestController {
         String name = RequestParser.getPlayerName(body);
         String move = RequestParser.getMove(body);
 
-        System.out.println("Set move " + move + " for " + name);
+        System.out.println("Set move " + move + " for " + name + " in " + id);
         gameService.recordAction(UUID.fromString(id), name, move);
     }
 }
