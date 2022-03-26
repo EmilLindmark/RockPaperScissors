@@ -1,6 +1,14 @@
 # RockPaperScissors
 
-## Guide:
+## Bygg och starta applikationen
+
+### Windows
+Öppna katalogen med källkoden, högerklicka och välj "Open in windows terminal". Skriv "bash ./gradlew bootRun" för att starta applikationen.
+
+### Linux terminal
+Öppna katalogen med källkoden. Skriv "./gradlew bootRun" för att starta applikationen.
+
+## Spela
 OBS: Denna guide antar att applikationen körs på samma maskin som båda spelarna använder. Om så inte är fallet, byt ut "http://localhost:8080" mot adressen där applikationen körs.
 
 Ladda ned postman via https://www.postman.com/downloads/ eller använd postmans webbgränssnitt https://www.postman.com/.
