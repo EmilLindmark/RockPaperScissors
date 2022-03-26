@@ -41,7 +41,7 @@ public class GameService {
     }
 
     /**
-     * Adds player to existing game
+     * Adds player to an existing game
      * @param id
      * @param playerName
      */
@@ -79,30 +79,15 @@ public class GameService {
     }
 
     protected void determineWinner(GameInfo gameInfo){
-        if(gameInfo.getPlayer1().getMove().equals(gameInfo.getPlayer2().getMove())){
-            gameInfo.setWinner(tie);
-            return;
-        }
+        Boolean result = gameInfo.getPlayer1().getMove()
+                .winnsOver(gameInfo.getPlayer2().getMove());
 
-        if(gameInfo.getPlayer1().getMove().equals(Move.PAPER)){
-            if(gameInfo.getPlayer2().getMove().equals(Move.ROCK)){
-                gameInfo.setWinner(gameInfo.getPlayer1().getName());
-            } else {
-                gameInfo.setWinner(gameInfo.getPlayer2().getName());
-            }
-        } else if(gameInfo.getPlayer1().getMove().equals(Move.ROCK)){
-            if(gameInfo.getPlayer2().getMove().equals(Move.SCISSORS)){
-                gameInfo.setWinner(gameInfo.getPlayer1().getName());
-            } else {
-                gameInfo.setWinner(gameInfo.getPlayer2().getName());
-            }
+        if(result == null) {
+            gameInfo.setWinner(tie);
+        } else if(result){
+            gameInfo.setWinner(gameInfo.getPlayer1().getName());
         } else {
-            //Player1 has scissors
-            if(gameInfo.getPlayer2().getMove().equals(Move.PAPER)){
-                gameInfo.setWinner(gameInfo.getPlayer1().getName());
-            } else {
-                gameInfo.setWinner(gameInfo.getPlayer2().getName());
-            }
+            gameInfo.setWinner(gameInfo.getPlayer2().getName());
         }
     }
 }

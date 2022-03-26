@@ -1,6 +1,7 @@
 package api.utils;
 
 import game.rockpaperscissors.Move;
+import org.json.JSONException;
 import org.junit.Assert;
 import org.junit.Test;
 

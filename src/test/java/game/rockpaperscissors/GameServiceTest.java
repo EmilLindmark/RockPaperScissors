@@ -153,20 +153,6 @@ public class GameServiceTest {
                 .setWinner(player2Name);
     }
 
-    @Test
-    public void testDetermineWinnerPaperRock(){
-        GameInfo gameInfoMock = Mockito.mock(GameInfo.class);
-        Player player1Mock = Mockito.mock(Player.class);
-        Player player2Mock = Mockito.mock(Player.class);
-        configureMocks(gameInfoMock, player1Mock, player2Mock);
-
-        Mockito.when(player1Mock.getMove()).thenReturn(Move.PAPER);
-        Mockito.when(player2Mock.getMove()).thenReturn(Move.ROCK);
-        cut.determineWinner(gameInfoMock);
-        Mockito.verify(gameInfoMock, Mockito.times(1))
-                .setWinner(player1Name);
-    }
-
     private void configureMocks(GameInfo gameInfoMock, Player player1Mock,
                                        Player player2Mock){
         Mockito.when(gameInfoMock.getPlayer1()).thenReturn(player1Mock);

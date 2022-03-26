@@ -12,7 +12,14 @@ public class RequestParser {
     }
 
     private static String getValue(String param, String body){
-        JSONObject o =new JSONObject(body);
-        return o.get(param).toString();
+        JSONObject o = new JSONObject(body);
+        String value = o.get(param).toString();
+
+        if(value.isEmpty()){
+            throw new IllegalArgumentException(
+                    "Value for needed parameter '" + param + "' is missing in request body.");
+        }
+
+        return value;
     }
 }
